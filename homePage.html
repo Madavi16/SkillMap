@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Skill Map for Students</title>
+  <link rel="stylesheet" href="style.css" />
+   <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 120px; /* space for search bar */
+    }
+
+    h1 {
+      font-size: 48px;
+      color: #2c3e50;
+    }
+
+    p {
+      font-size: 20px;
+      color: #555;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+
+    .btn-group {
+      margin-top: 30px;
+    }
+
+    .btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 15px 30px;
+      font-size: 18px;
+      text-decoration: none;
+      color: white;
+      background-color: #3498db;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #2980b9;
+    }
+
+    .dashboard-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 40px;
+      height: 50px;
+      background-color: #3498db;
+      color: white;
+      font-size: 24px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 50px;
+      text-decoration: none;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      transition: background-color 0.3s ease;
+    }
+
+    .dashboard-icon:hover {
+      background-color: #2980b9;
+    }
+
+    .search-bar-container {
+      width: 600px;
+      background: #fff;
+      padding: 15px 20px;
+      margin-top: 130px;
+      margin-left: auto;
+      margin-right: auto;
+      border-top: 1px solid #ccc;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      border-radius: 30px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .search-bar-container input {
+      width: 60%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      margin-right: 10px;
+    }
+
+    .search-bar-container button {
+      padding: 12px 20px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .search-bar-container button:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to Skill Map</h1>
+  <p>
+    Skill Map is a powerful platform designed for students to build and showcase their academic and professional journey. 
+    Students can create personal profiles, list their skills, and upload verified certificates. 
+    Recruiters and educators can browse the directory to discover talent based on skills and credentials.
+  </p>
+  <div class="btn-group">
+    <a href="index.html" class="btn">Student Directory</a>
+    <a href="upload.html" class="btn">Upload Certificate</a>
+    <a href="project.html" class="btn">Project</a>
+  </div>
+  <a href="dashboard.html" class="dashboard-icon" title="Go to Dashboard">🧽</a>
+  <div class="search-bar-container">
+    <input type="text" id="searchInput" placeholder="Search students or certificates..." />
+    <button onclick="performSearch()">Search</button>
+  </div>
+  <script>
+    const API = "http://localhost:5000/api";
+    function performSearch() {
+      const query = document.getElementById('searchInput').value;
+      if (!query) return;
+      fetch(`${API}/search?query=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => {
+          alert(`🔍 Found ${data.results.length} result(s)`);
+          console.log(data.results);
+        })
+        .catch(err => {
+          console.error(err);
+          alert("❌ Search failed. Try again.");
+        });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificate Upload</title>
+  <style>
+    h2 {
+      color: #333;
+      margin-top: 40px;
+    }
+
+    input,
+    textarea {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      width: 375px;
+      height: 25px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 15px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-left: 450px;
+      margin-top: 80px;
+      width: 400px;
+      border-radius: 8px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .toast-message {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #28a745;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 9999;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Upload Certificate</h2>
+    <input type="text" id="student_id" placeholder="Student ID">
+    <input type="text" id="cert_title" placeholder="Certificate Title">
+    <input type="text" id="cert_issuer" placeholder="Issuer">
+    <input type="file" id="cert_file">
+    <button onclick="uploadCert()">Upload Certificate</button>
+  </div>
+
+  <div class="card-container" id="directory"></div>
+
+  <!-- Success Message -->
+  <div class="toast-message" id="toast">🎉 Certificate uploaded successfully!</div>
+
+  <script>
+    const API = 'http://localhost:5000/api';
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.innerText = message;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    function uploadCert() {
+      const file = document.getElementById('cert_file').files[0];
+      const studentId = document.getElementById('student_id').value;
+      const title = document.getElementById('cert_title').value;
+      const issuer = document.getElementById('cert_issuer').value;
+
+      if (!studentId || !file || !title || !issuer) {
+        alert("⚠️ Please fill all fields and select a file.");
+        return;
+      }
+
+      const form = new FormData();
+      form.append('student_id', studentId);
+      form.append('title', title);
+      form.append('issuer', issuer);
+      form.append('file', file);
+
+      fetch(`${API}/certificates`, {
+        method: 'POST',
+        body: form
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          showToast("🎉 Certificate uploaded successfully!");
+          document.getElementById('cert_title').value = '';
+          document.getElementById('cert_issuer').value = '';
+          document.getElementById('cert_file').value = '';
+        } else {
+          alert("❌ Upload failed.");
+        }
+      })
+      .catch(() => alert("❌ Certificate upload failed."));
+    }
+  </script>
+</body>
+</html>

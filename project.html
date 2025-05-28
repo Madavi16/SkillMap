@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload Project</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      padding: 30px;
+    }
+
+    h2 {
+      color: #333;
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    .form-container {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      margin-left: 100px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    input, textarea {
+      display: block;
+      width: 465px;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #3498db;
+      color: #fff;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+      color: green;
+      text-align: center;
+    }
+
+  .toast-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #28a745;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    display: none;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Upload Project</h2>
+    <input type="number" id="student_id" placeholder="Student ID" required />
+    <input type="text" id="project_title" placeholder="Project Title" required />
+    <textarea id="project_desc" rows="5" placeholder="Project Description"></textarea>
+    <input type="file" id="project_file" />
+    <button onclick="uploadProject()">Upload Project</button>
+    <div id="message" class="message"></div>
+    <div id="toast" class="toast-message">✅ Project uploaded successfully!</div>
+  </div>
+  
+  <script>
+    const API = 'http://localhost:5000/api';
+
+    function showToast(message, success = true) {
+  const toast = document.getElementById('toast');
+  toast.innerText = message;
+  toast.style.backgroundColor = success ? '#28a745' : '#dc3545';
+  toast.style.display = 'block';
+  setTimeout(() => {
+    toast.style.display = 'none';
+  }, 3000);
+}
+
+function uploadProject() {
+  const studentId = document.getElementById('student_id').value;
+  const title = document.getElementById('project_title').value;
+  const description = document.getElementById('project_desc').value;
+  const file = document.getElementById('project_file').files[0];
+
+  if (!studentId || !title || !file) {
+    showToast("⚠️ Please fill in all required fields and select a file.", false);
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('student_id', studentId);
+  formData.append('title', title);
+  formData.append('description', description);
+  formData.append('file', file);
+
+  fetch(`${API}/projects`, {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    showToast("✅ Project uploaded successfully!");
+    document.getElementById('student_id').value = '';
+    document.getElementById('project_title').value = '';
+    document.getElementById('project_desc').value = '';
+    document.getElementById('project_file').value = '';
+  })
+  .catch(err => {
+    console.error(err);
+    showToast("❌ Upload failed.", false);
+  });
+}
+</script>
+</body>
+</html>
